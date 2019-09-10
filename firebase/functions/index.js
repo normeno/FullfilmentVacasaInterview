@@ -14,40 +14,6 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
   console.log('Dialogflow Request headers: ' + JSON.stringify(request.headers));
   console.log('Dialogflow Request body: ' + JSON.stringify(request.body));
 
-  /** Create simple context */
-  function handleContext(name, lifespan, parameters) {
-    return {
-      name,
-      lifespan,
-      parameters
-    };
-  }
-  
-  function createVacasaCard(title, imageUrl, buttonText, buttonUrl, text = '') {
-    return new Card({
-      title,
-      imageUrl,
-      text,
-      buttonText,
-      buttonUrl
-    })
-  }
-  
-  async function callApi(city) {
-    const endpoint = `https://webscrapinginterview2.azurewebsites.net/api/vacasa?city=${city}`;
-    var response = null;
-
-    try {
-      const apiResponse = await axios.get(endpoint);
-      response = apiResponse.data;
-      console.log('Success callApi');
-    } catch (error) {
-      console.error('Catch callApi ' + error);
-    }
-
-    return response;
-  }
-
   async function ShowRentals(agent) {
     const city = request.body.queryResult.parameters.city || '';
 
@@ -82,3 +48,39 @@ exports.dialogflowFirebaseFulfillment = functions.https.onRequest((request, resp
   intentMap.set('Show Rentals', ShowRentals);
   agent.handleRequest(intentMap);
 });
+
+/** Create simple context */
+function handleContext(name, lifespan, parameters) {
+  return {
+    name,
+    lifespan,
+    parameters
+  };
+}
+
+/** Create a card rich message */
+function createVacasaCard(title, imageUrl, buttonText, buttonUrl, text = '') {
+  return new Card({
+    title,
+    imageUrl,
+    text,
+    buttonText,
+    buttonUrl
+  })
+}
+
+/** Call API to get data */
+async function callApi(city) {
+  const endpoint = `https://webscrapinginterview2.azurewebsites.net/api/vacasa?city=${city}`;
+  var response = null;
+
+  try {
+    const apiResponse = await axios.get(endpoint);
+    response = apiResponse.data;
+    console.log('Success callApi');
+  } catch (error) {
+    console.error('Catch callApi ' + error);
+  }
+
+  return response;
+}
